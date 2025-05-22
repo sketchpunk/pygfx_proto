@@ -3,16 +3,18 @@ import math
 import numpy as np
 import pygfx as gfx
 from rendercanvas.glfw import RenderCanvas  # Import RenderCanvas specifically for glfw
+import pylinalg as la
 
 
 class UseGfxDisplay:
     # region MAIN
     def __init__(self, _props={}):
-        props = {"width": 800, "height": 600, "stats": True, "ortho": False, **_props}
+        props = {"width": 800, "height": 600, "stats": True, "ortho": False, "zup": False, **_props}
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         self.onPreRender = None
         self.onPostRender = None
+        self.isZup = props.get("zup")
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # Core
@@ -29,9 +31,13 @@ class UseGfxDisplay:
         else:
             self.camera = gfx.OrthographicCamera(w, h)
 
-        self.camCtrl = gfx.OrbitController(self.camera, register_events=self.renderer)
+        if self.isZup:
+            self.camera.world.reference_up = 0, 0, 1
+            self.camera.local.position = (0, 7, 3)
+        else:
+            self.camera.local.position = (0, 3, 7)
 
-        self.camera.local.position = (0, 3, 7)
+        self.camCtrl = gfx.OrbitController(self.camera, register_events=self.renderer)
         self.camera.show_pos((0, 0, 0))
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,16 +69,29 @@ class UseGfxDisplay:
     # endregion
 
     # region METHODS
-    # polar = [lat,lon]
+    # polar = [azimuth,zenith]
     def sphericalLook(self, polar, radius, target=(0, 0, 0)):
-        phi = (90 - polar[1]) * math.pi / 180  # Lon
-        theta = (polar[0] + 180) * math.pi / 180  # Lat
 
-        self.camera.local.position = (
-            -(radius * math.sin(phi) * math.sin(theta)) + target[0],
-            radius * math.cos(phi) + target[1],
-            -(radius * math.sin(phi) * math.cos(theta)) + target[2],
-        )
+        if not self.isZup:
+            # Y UP ROTATION
+            azimuth = (polar[0] + 180) * math.pi / 180  # Horizontal plane
+            zenith = (90 - polar[1]) * math.pi / 180  # Vertical plane
+
+            self.camera.local.position = (
+                -(radius * math.sin(zenith) * math.sin(azimuth)) + target[0],
+                radius * math.cos(zenith) + target[1],
+                -(radius * math.sin(zenith) * math.cos(azimuth)) + target[2],
+            )
+        else:
+            # Z UP ROTATION
+            azimuth = polar[0] * (math.pi / 180)
+            zenith = polar[1] * (math.pi / 180)
+
+            self.camera.local.position = (
+                (radius * -math.sin(azimuth)) + target[0],
+                radius * math.cos(azimuth) * math.cos(zenith) + target[1],
+                (radius * math.cos(azimuth) * math.sin(zenith)) + target[2],
+            )
 
         self.camera.show_pos(target)
         return self
@@ -128,15 +147,18 @@ def useDarkScene(app):
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Ground
-    app.scene.add(
-        gfx.GridHelper(
-            size=20,
-            divisions=20,
-            thickness=1,
-            color1=(0.25, 0.30, 0.25, 1),
-            color2=(0.17, 0.17, 0.17, 1),
-        )
+    grid = gfx.GridHelper(
+        size=20,
+        divisions=20,
+        thickness=1,
+        color1=(0.25, 0.30, 0.25, 1),
+        color2=(0.17, 0.17, 0.17, 1),
     )
+
+    if app.isZup:
+        grid.local.rotation = la.quat_from_euler([1.57079632679, 0, 0])
+
+    app.scene.add(grid)
 
     return app
 
