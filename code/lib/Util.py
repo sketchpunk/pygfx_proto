@@ -1,4 +1,5 @@
 import pygfx as gfx
+import threading
 
 
 # Search scene graph looking for the first object that passes the check lambda
@@ -39,3 +40,9 @@ def swopClipSkeleton(clip, skel):
             t.target = map[t.target.name]
         else:
             print(f"Bone not found {t.target.name}")
+
+
+# Recreating Javascript's setTimeout functionality
+def setTimeout(min, fn):
+    timer = threading.Timer(min, fn)
+    timer.start()

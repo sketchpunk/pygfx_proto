@@ -6,7 +6,7 @@ from lib.Util import setTimeout
 # endregion
 
 # region SETUP
-App = useDarkScene(UseGfxDisplay({"title": "Template Basic"})).sphericalLook([0, 20], 10)
+App = useDarkScene(UseGfxDisplay({"title": "Template Dynamic Points"})).sphericalLook([0, 20], 10)
 
 # def onPreRender(dt, et):
 #     pass
