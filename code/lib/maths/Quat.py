@@ -3,9 +3,6 @@ import numpy as np
 from typing import Optional, Type, Self, Union, List
 from Vec3 import Vec3, Vec3Like
 
-class Quat(np.ndarray):
-    pass
-
 type QuatLike = Union[Quat, List[float], np.ndarray]
 
 class Quat(np.ndarray):
@@ -39,7 +36,7 @@ class Quat(np.ndarray):
         self[ 3 ] = a[ 3 ]
         return self
     
-    def clone( self )->Quat:
+    def clone( self )->"Quat":
         return Quat( self )
     
     # endregion
@@ -78,7 +75,7 @@ class Quat(np.ndarray):
     # endregion
 
     # region FROM OPERATIONS
-    
+
     def fromMul( self, a: QuatLike, b: QuatLike ) ->Self:
         qMul( a, b, self )
         return self

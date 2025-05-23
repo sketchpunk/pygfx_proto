@@ -3,11 +3,7 @@ import math
 from typing import Optional, Type, Self, Union, List,Tuple
 from Quat import QuatLike
 
-class Vec3(np.ndarray):
-    pass
-
 type Vec3Like = Union[Vec3, List[float], np.ndarray]
-
 
 class Vec3(np.ndarray):
     # region SETUP
@@ -69,6 +65,9 @@ class Vec3(np.ndarray):
         self[ 1 ] = a[ 1 ]
         self[ 2 ] = a[ 2 ]
         return self
+    
+    def clone( self )->"Vec3":
+        return Vec3( self[0],self[1],self[2] )
 
     # endregion
 
@@ -152,6 +151,13 @@ class Vec3(np.ndarray):
         self[2] -= v[2]
 
         return self
+
+    def mul(self, v: Vec3Like) -> Self:
+        self[0] *= v[0]
+        self[1] *= v[1]
+        self[2] *= v[2]
+
+        return self
     
     def scale( self, s: Union[int,float] )-> Self:
         self[0] *= s
@@ -177,9 +183,52 @@ class Vec3(np.ndarray):
         self[ 2 ] = -self[ 2 ]
         return self
 
+    def quatTransform( self, q: QuatLike )->Self:
+        qx = q[ 0 ]
+        qy = q[ 1 ]
+        qz = q[ 2 ]
+        qw = q[ 3 ]
+        vx = self[ 0 ]
+        vy = self[ 1 ]
+        vz = self[ 2 ]
+        x1 = qy * vz - qz * vy
+        y1 = qz * vx - qx * vz
+        z1 = qx * vy - qy * vx
+        x2 = qw * x1 + qy * z1 - qz * y1
+        y2 = qw * y1 + qz * x1 - qx * z1
+        z2 = qw * z1 + qx * y1 - qy * x1
+        self[ 0 ] = vx + 2 * x2
+        self[ 1 ] = vy + 2 * y2
+        self[ 2 ] = vz + 2 * z2
+        return self
+    
     # endregion
     
     # region FROM OPERATORS
+
+    def fromAdd( self, a: Vec3Like, b: Vec3Like ) ->Self:
+        self[0] = a[0] + b[0]
+        self[1] = a[1] + b[1]
+        self[2] = a[2] + b[2]
+        return self
+    
+    def fromMul( self, a: Vec3Like, b: Vec3Like ) ->Self:
+        self[0] = a[0] * b[0]
+        self[1] = a[1] * b[1]
+        self[2] = a[2] * b[2]
+        return self
+
+    def fromInvert( self, a: Vec3Like )->Self:
+        self[ 0 ] = 1 / a[0]
+        self[ 1 ] = 1 / a[1]
+        self[ 2 ] = 1 / a[2]
+        return self
+
+    def fromNegate( self, a: Vec3Like )->Self:
+        self[ 0 ] = -a[ 0 ]
+        self[ 1 ] = -a[ 1 ]
+        self[ 2 ] = -a[ 2 ]
+        return self
 
     def fromCross(self, a: Vec3Like, b: Vec3Like)->Self:
         ax = a[0]
@@ -233,7 +282,7 @@ class Vec3(np.ndarray):
     def dot( a: Vec3Like, b : Vec3Like)->Self:
         return a[ 0 ] * b[ 0 ] + a[ 1 ] * b[ 1 ] + a[ 2 ] * b[ 2 ]
     
-    def cross( a: Vec3Like, b: Vec3Like)->Vec3:
+    def cross( a: Vec3Like, b: Vec3Like)->"Vec3":
         return Vec3( a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0] )
 
     def dist( a: Vec3Like, b: Vec3Like )->float:
@@ -242,7 +291,7 @@ class Vec3(np.ndarray):
     def distSq( a: Vec3Like, b: Vec3Like )->float:
         return (a[ 0 ]-b[ 0 ]) ** 2 + (a[ 1 ]-b[ 1 ]) ** 2 + (a[ 2 ]-b[ 2 ]) ** 2
 
-    def orthogonal( fwd: Vec3Like, up: Vec3Like = [0,1,0] )->Tuple[Vec3, Vec3, Vec3]:
+    def orthogonal( fwd: Vec3Like, up: Vec3Like = [0,1,0] )->Tuple["Vec3", "Vec3", "Vec3"]:
         zAxis = Vec3( fwd[0], fwd[1], fwd[2] )
         yAxis = Vec3( up[0], up[1], up[2] )
         xAxis = Vec3().fromCross( yAxis, zAxis ).norm()
