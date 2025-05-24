@@ -1,5 +1,5 @@
-from lib.models.DynamicLines import DynamicLines
-from lib.models.DynamicPoints import DynamicPoints
+from models.DynamicLines import DynamicLines
+from models.DynamicPoints import DynamicPoints
 
 
 class UseVisDebug:

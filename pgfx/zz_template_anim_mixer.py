@@ -1,6 +1,6 @@
 # region IMPORTS
-from lib.UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene
-from lib.Util import findFirst, swopClipSkeleton
+from UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene
+from Util import findFirst, swopClipSkeleton
 
 from pathlib import Path
 

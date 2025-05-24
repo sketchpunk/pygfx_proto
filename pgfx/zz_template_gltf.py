@@ -1,6 +1,6 @@
 # region IMPORTS
-from lib.UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene
-from lib.Util import findFirst
+from UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene
+from Util import findFirst
 import math
 
 import pylinalg as la

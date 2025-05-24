@@ -1,6 +1,8 @@
-from Quat import Quat
-from Vec3 import Vec3Like, Vec3
 from typing import Optional, Self
+from .types import Vec3Like
+
+from .Quat import Quat
+from .Vec3 import Vec3
 
 # REF
 # https://gabormakesgames.com/blog_transforms_transforms.html

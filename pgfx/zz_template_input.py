@@ -1,5 +1,5 @@
 # region IMPORTS
-from lib.UseGfxDisplay import UseGfxDisplay, useDarkScene, testCube
+from UseGfxDisplay import UseGfxDisplay, useDarkScene, testCube
 import math
 
 # endregion

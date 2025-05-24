@@ -1,7 +1,7 @@
 # region IMPORTS
-from lib.UseGfxDisplay import UseGfxDisplay, useDarkScene
-from lib.models.DynamicLines import DynamicLines
-from lib.Util import setTimeout
+from UseGfxDisplay import UseGfxDisplay, useDarkScene
+from models.DynamicLines import DynamicLines
+from Util import setTimeout
 
 # endregion
 

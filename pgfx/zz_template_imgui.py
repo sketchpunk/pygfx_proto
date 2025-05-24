@@ -1,7 +1,7 @@
 # region IMPORTS
-from lib.UseGfxDisplay import UseGfxDisplay, useDarkScene, testCube
+from UseGfxDisplay import UseGfxDisplay, useDarkScene, testCube
 
-from lib.UseImgui import UseImgui, guiButton, guiFStepSlider
+from UseImgui import UseImgui, guiButton, guiFStepSlider
 from imgui_bundle import imgui  # lots of warnings about GLFW being used twice?
 import math
 

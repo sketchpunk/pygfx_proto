@@ -1,7 +1,7 @@
 # region IMPORTS
-from lib.UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene
+from UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene
 
-from lib.UseVisDebug import UseVisDebug
+from UseVisDebug import UseVisDebug
 
 # endregion
 

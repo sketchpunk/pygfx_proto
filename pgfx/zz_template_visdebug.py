@@ -1,6 +1,6 @@
 # region IMPORTS
-from lib.UseGfxDisplay import UseGfxDisplay, useDarkScene
-from lib.UseVisDebug import UseVisDebug
+from UseGfxDisplay import UseGfxDisplay, useDarkScene
+from UseVisDebug import UseVisDebug
 import math
 import pylinalg as la
 import numpy as np

@@ -1,0 +1,32 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    // This is usually the default "Python: Current File" config
+    // Keep this if you want to run non-module scripts directly
+    {
+      "name": "Python Debugger: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    {
+      "name": "Hardcoded Module",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "proto._pgfx", // <-- Manually specify the module path
+      "cwd": "${workspaceFolder}", // <-- Crucial: Runs from project root
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        // IMPORTANT: This adds your project root to the beginning of PYTHONPATH
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    }
+  ]
+}
