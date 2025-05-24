@@ -10,7 +10,7 @@ class Quat(np.ndarray):
     # region SETUP
 
     # create new object and cast it as a Numpy Array
-    def __new__(cls: Type[Self], q: Optional[QuatLike]) -> Self:
+    def __new__(cls: Type[Self], q: Optional[QuatLike] = None) -> Self:
         if q:
             return np.asarray(q, dtype=np.float32).view(cls)
         return np.asarray([0, 0, 0, 1], dtype=np.float32).view(cls)

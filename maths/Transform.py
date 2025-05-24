@@ -12,7 +12,7 @@ from .Vec3 import Vec3
 class Transform:
 
     # region MAIN
-    def __init__(self, t: Optional["Transform"]):
+    def __init__(self, t: Optional["Transform"] = None):
         if t:
             self.rot = t.rot.clone()
             self.pos = t.pos.clone()
