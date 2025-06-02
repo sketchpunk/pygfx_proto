@@ -1,6 +1,6 @@
 # region IMPORTS
 from UseGfxDisplay import UseGfxDisplay, useDarkScene
-from models.DynamicPoints import DynamicPoints
+from DynamicPoints import DynamicPoints
 from Util import setTimeout
 
 # endregion

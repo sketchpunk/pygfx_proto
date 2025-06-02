@@ -22,7 +22,7 @@ class Vec3(np.ndarray):
         return self.__repr__()
 
     def __repr__(self) -> str:
-        return f"Vec3( {self[0]}, {self[1]}, {self[2]} )"
+        return f"[{self[0]}, {self[1]}, {self[2]}]"
 
     # endregion
 

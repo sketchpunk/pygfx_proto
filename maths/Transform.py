@@ -23,6 +23,13 @@ class Transform:
         self.pos = Vec3()
         self.scl = Vec3(1.0, 1.0, 1.0)
 
+    # override ndarray's str function
+    def __str__(self) -> str:
+        return self.__repr__()
+
+    def __repr__(self) -> str:
+        return f"rot:{self.rot} \npos:{self.pos} \nscl:{self.scl}"
+
     # endregion
 
     # region SETTERS / GETTERS

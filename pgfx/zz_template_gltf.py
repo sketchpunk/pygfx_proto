@@ -7,6 +7,8 @@ import pylinalg as la
 
 from pathlib import Path
 
+# https://github.com/pygfx/pygfx/blob/9501a3174401f07b1d0b810e0826680d052e8960/pygfx/utils/load_gltf.py#L19
+
 # endregion
 
 # region SETUP

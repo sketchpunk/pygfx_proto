@@ -24,7 +24,7 @@ class Quat(np.ndarray):
         return self.__repr__()
 
     def __repr__(self) -> str:
-        return f"Quat( {self[0]}, {self[1]}, {self[2]}, {self[3]} )"
+        return f"[{self[0]}, {self[1]}, {self[2]}, {self[3]}]"
 
     # endregion
 
@@ -247,10 +247,58 @@ class Quat(np.ndarray):
     def dot(a: QuatLike, b: QuatLike) -> float:
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]
 
+    def slerp(a: QuatLike, b: QuatLike, t: float, out: QuatLike = [0, 0, 0, 1]) -> QuatLike:
+        # benchmarks: http://jsperf.com/Quat-slerp-implementations
+        ax = a[0]
+        ay = a[1]
+        az = a[2]
+        aw = a[3]
+        bx = b[0]
+        by = b[1]
+        bz = b[2]
+        bw = b[3]
+
+        # let omega, cosom, sinom,
+        scale0 = 0
+        scale1 = 1
+
+        # calc cosine
+        cosom = ax * bx + ay * by + az * bz + aw * bw
+
+        # adjust signs (if necessary)
+        if cosom < 0.0:
+            cosom = -cosom
+            bx = -bx
+            by = -by
+            bz = -bz
+            bw = -bw
+
+        # calculate coefficients
+        if (1.0 - cosom) > 0.000001:
+            # standard case (slerp)
+            omega = np.acos(cosom)
+            sinom = np.sin(omega)
+            scale0 = np.sin((1.0 - t) * omega) / sinom
+            scale1 = np.sin(t * omega) / sinom
+        else:
+            # "from" and "to" Quats are very close so we can do a linear interpolation
+            scale0 = 1.0 - t
+            scale1 = t
+
+        # calculate final values
+        out[0] = scale0 * ax + scale1 * bx
+        out[1] = scale0 * ay + scale1 * by
+        out[2] = scale0 * az + scale1 * bz
+        out[3] = scale0 * aw + scale1 * bw
+
+        return out
+
     # endregion
 
 
 # region REUSABLE OPS
+
+
 def qMul(a: QuatLike, b: QuatLike, out: QuatLike) -> QuatLike:
     ax = a[0]
     ay = a[1]
@@ -286,6 +334,17 @@ def qInvert(q: QuatLike, out: QuatLike) -> QuatLike:
     out[1] = -a1 * iDot
     out[2] = -a2 * iDot
     out[3] = a3 * iDot
+    return out
+
+
+def qNorm(a: QuatLike, out: QuatLike = [0, 0, 0, 1]) -> QuatLike:
+    len = a[0] ** 2 + a[1] ** 2 + a[2] ** 2 + a[3] ** 2
+    if len > 0:
+        len = 1 / math.sqrt(len)
+        out[0] = a[0] * len
+        out[1] = a[1] * len
+        out[2] = a[2] * len
+        out[3] = a[3] * len
     return out
 
 

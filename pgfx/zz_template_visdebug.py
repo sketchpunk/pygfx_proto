@@ -1,9 +1,20 @@
+# region Run current file with UseVisDebug coded to import as part of a package
+import sys
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+# endregion
+
 # region IMPORTS
-from UseGfxDisplay import UseGfxDisplay, useDarkScene
-from UseVisDebug import UseVisDebug
-import math
-import pylinalg as la
-import numpy as np
+
+from UseGfxDisplay import UseGfxDisplay, useDarkScene  # noqa: E402
+from UseVisDebug import UseVisDebug  # noqa: E402
+import math  # noqa: E402
+import pylinalg as la  # noqa: E402
+import numpy as np  # noqa: E402
 
 # endregion
 
