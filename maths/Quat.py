@@ -1,5 +1,6 @@
 from typing import Optional, Type, Self
 from .types import Vec3Like, QuatLike
+from numpy.typing import NDArray
 
 import math
 import numpy as np
@@ -37,6 +38,13 @@ class Quat(np.ndarray):
         self[3] = a[3]
         return self
 
+    def copyTo(self, a: QuatLike) -> Self:
+        a[0] = self[0]
+        a[1] = self[1]
+        a[2] = self[2]
+        a[3] = self[3]
+        return self
+
     def clone(self) -> "Quat":
         return Quat(self)
 
@@ -55,7 +63,7 @@ class Quat(np.ndarray):
     def norm(self) -> Self:
         len = self[0] ** 2 + self[1] ** 2 + self[2] ** 2 + self[3] ** 2
         if len > 0:
-            len = 1 / math.sqrt(len)
+            len = 1 / np.sqrt(len)
             self[0] *= len
             self[1] *= len
             self[2] *= len
@@ -129,7 +137,7 @@ class Quat(np.ndarray):
 
         if fTrace > 0.0:
             # |w| > 1/2, may as well choose w > 1/2
-            fRoot = math.sqrt(fTrace + 1.0)  # 2w
+            fRoot = np.sqrt(fTrace + 1.0)  # 2w
             self[3] = 0.5 * fRoot
 
             fRoot = 0.5 / fRoot  # 1/(4w)
@@ -147,7 +155,7 @@ class Quat(np.ndarray):
             j = (i + 1) % 3
             k = (i + 2) % 3
 
-            fRoot = math.sqrt(m[i * 3 + i] - m[j * 3 + j] - m[k * 3 + k] + 1.0)
+            fRoot = np.sqrt(m[i * 3 + i] - m[j * 3 + j] - m[k * 3 + k] + 1.0)
             self[i] = 0.5 * fRoot
             fRoot = 0.5 / fRoot
             self[3] = (m[j * 3 + k] - m[k * 3 + j]) * fRoot
@@ -189,6 +197,49 @@ class Quat(np.ndarray):
             self.norm()
 
         return self
+
+    def fromEulerOrder(self, x: float, y: float, z: float, order: str = "YXZ") -> Self:
+        # https://github.com/mrdoob/three.js/blob/dev/src/math/Quat.js
+        c1 = np.cos(x * 0.5)
+        c2 = np.cos(y * 0.5)
+        c3 = np.cos(z * 0.5)
+        s1 = np.sin(x * 0.5)
+        s2 = np.sin(y * 0.5)
+        s3 = np.sin(z * 0.5)
+
+        match order:
+            case "XYZ":
+                self[0] = s1 * c2 * c3 + c1 * s2 * s3
+                self[1] = c1 * s2 * c3 - s1 * c2 * s3
+                self[2] = c1 * c2 * s3 + s1 * s2 * c3
+                self[3] = c1 * c2 * c3 - s1 * s2 * s3
+            case "YXZ":
+                self[0] = s1 * c2 * c3 + c1 * s2 * s3
+                self[1] = c1 * s2 * c3 - s1 * c2 * s3
+                self[2] = c1 * c2 * s3 - s1 * s2 * c3
+                self[3] = c1 * c2 * c3 + s1 * s2 * s3
+            case "ZXY":
+                self[0] = s1 * c2 * c3 - c1 * s2 * s3
+                self[1] = c1 * s2 * c3 + s1 * c2 * s3
+                self[2] = c1 * c2 * s3 + s1 * s2 * c3
+                self[3] = c1 * c2 * c3 - s1 * s2 * s3
+            case "ZYX":
+                self[0] = s1 * c2 * c3 - c1 * s2 * s3
+                self[1] = c1 * s2 * c3 + s1 * c2 * s3
+                self[2] = c1 * c2 * s3 - s1 * s2 * c3
+                self[3] = c1 * c2 * c3 + s1 * s2 * s3
+            case "YZX":
+                self[0] = s1 * c2 * c3 + c1 * s2 * s3
+                self[1] = c1 * s2 * c3 + s1 * c2 * s3
+                self[2] = c1 * c2 * s3 - s1 * s2 * c3
+                self[3] = c1 * c2 * c3 - s1 * s2 * s3
+            case "XZY":
+                self[0] = s1 * c2 * c3 - c1 * s2 * s3
+                self[1] = c1 * s2 * c3 - s1 * c2 * s3
+                self[2] = c1 * c2 * s3 + s1 * s2 * c3
+                self[3] = c1 * c2 * c3 + s1 * s2 * s3
+
+        return self.norm()
 
     # endregion
 
@@ -293,6 +344,36 @@ class Quat(np.ndarray):
 
         return out
 
+    # Cheaper alternative to slerp
+    def nblend(a: QuatLike, b: QuatLike, t: float, out: QuatLike = [0, 0, 0, 1]) -> QuatLike:
+        # https://physicsforgames.blogspot.com/2010/02/quaternions.html
+        a_x = a[0]  # Quaternion From
+        a_y = a[1]
+        a_z = a[2]
+        a_w = a[3]
+        b_x = b[0]  # Quaternion To
+        b_y = b[1]
+        b_z = b[2]
+        b_w = b[3]
+        dot = a_x * b_x + a_y * b_y + a_z * b_z + a_w * b_w
+        ti = 1 - t
+        s = 1
+
+        # if Rotations with a dot less then 0 causes artifacts when lerping,
+        # Can fix this by switching the sign of the To Quaternion.
+        if dot < 0:
+            s = -1
+
+        out[0] = ti * a_x + t * b_x * s
+        out[1] = ti * a_y + t * b_y * s
+        out[2] = ti * a_z + t * b_z * s
+        out[3] = ti * a_w + t * b_w * s
+
+        return qNorm(out, out)
+
+    def createBuffer(cnt: int, init: QuatLike = [0, 0, 0, 1]) -> NDArray[np.float32]:
+        return np.full((cnt, 4), init, dtype=np.float32)
+
     # endregion
 
 
@@ -340,7 +421,7 @@ def qInvert(q: QuatLike, out: QuatLike) -> QuatLike:
 def qNorm(a: QuatLike, out: QuatLike = [0, 0, 0, 1]) -> QuatLike:
     len = a[0] ** 2 + a[1] ** 2 + a[2] ** 2 + a[3] ** 2
     if len > 0:
-        len = 1 / math.sqrt(len)
+        len = 1 / np.sqrt(len)
         out[0] = a[0] * len
         out[1] = a[1] * len
         out[2] = a[2] * len

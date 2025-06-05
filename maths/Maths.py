@@ -19,3 +19,6 @@ def spherical(x: float, y: float) -> Vec3Like:
         math.cos(x),
         math.cos(y) * sx,
     ]
+
+
+# ts = np.zeros(clip.frameCount, dtype=np.float32)

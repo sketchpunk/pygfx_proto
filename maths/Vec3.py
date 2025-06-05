@@ -1,7 +1,7 @@
 from typing import Optional, Type, Self, Union, Tuple
 from .types import Vec3Like, QuatLike
 
-import math
+from numpy.typing import NDArray
 import numpy as np
 
 
@@ -54,11 +54,17 @@ class Vec3(np.ndarray):
 
     @property
     def len(self) -> float:
-        return math.sqrt(self[0] ** 2 + self[1] ** 2 + self[2] ** 2)
+        return np.sqrt(self[0] ** 2 + self[1] ** 2 + self[2] ** 2)
 
     @property
     def lenSq(self) -> float:
         return self[0] ** 2 + self[1] ** 2 + self[2] ** 2
+
+    def xyz(self, x: float, y: float, z: float) -> Self:
+        self[0] = x
+        self[1] = y
+        self[2] = z
+        return self
 
     def copy(self, a: Vec3Like) -> Self:
         self[0] = a[0]
@@ -66,8 +72,28 @@ class Vec3(np.ndarray):
         self[2] = a[2]
         return self
 
+    def copyTo(self, a: Vec3Like) -> Self:
+        a[0] = self[0]
+        a[1] = self[1]
+        a[2] = self[2]
+        return self
+
     def clone(self) -> "Vec3":
         return Vec3(self[0], self[1], self[2])
+
+    def toMin(self) -> Self:
+        v = -np.finfo(np.float32).max
+        self[0] = v
+        self[1] = v
+        self[2] = v
+        return self
+
+    def toMax(self) -> Self:
+        v = np.finfo(np.float32).max
+        self[0] = v
+        self[1] = v
+        self[2] = v
+        return self
 
     # endregion
 
@@ -169,7 +195,7 @@ class Vec3(np.ndarray):
         return self
 
     def norm(self) -> Self:
-        mag = math.sqrt(self[0] ** 2 + self[1] ** 2 + self[2] ** 2)
+        mag = np.sqrt(self[0] ** 2 + self[1] ** 2 + self[2] ** 2)
         if mag == 0:
             return self
 
@@ -183,6 +209,18 @@ class Vec3(np.ndarray):
         self[0] = -self[0]
         self[1] = -self[1]
         self[2] = -self[2]
+        return self
+
+    def min(self, v: Vec3Like) -> Self:
+        self[0] = min(self[0], v[0])
+        self[1] = min(self[1], v[1])
+        self[2] = min(self[2], v[2])
+        return self
+
+    def max(self, v: Vec3Like) -> Self:
+        self[0] = max(self[0], v[0])
+        self[1] = max(self[1], v[1])
+        self[2] = max(self[2], v[2])
         return self
 
     def quatTransform(self, q: QuatLike) -> Self:
@@ -287,8 +325,15 @@ class Vec3(np.ndarray):
     def cross(a: Vec3Like, b: Vec3Like) -> "Vec3":
         return Vec3(a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0])
 
+    def lerp(a: Vec3Like, b: Vec3Like, t: float, out: Vec3Like = [0, 0, 0]) -> Vec3Like:
+        ti = 1 - t
+        out[0] = a[0] * ti + b[0] * t
+        out[1] = a[1] * ti + b[1] * t
+        out[2] = a[2] * ti + b[2] * t
+        return out
+
     def dist(a: Vec3Like, b: Vec3Like) -> float:
-        return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
+        return np.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2)
 
     def distSq(a: Vec3Like, b: Vec3Like) -> float:
         return (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2
@@ -310,5 +355,8 @@ class Vec3(np.ndarray):
 
         yAxis.fromCross(zAxis, xAxis).norm()  # realign up
         return [xAxis, yAxis, zAxis]
+
+    def createBuffer(cnt: int, init: Vec3Like = [0, 0, 0]) -> NDArray[np.float32]:
+        return np.full((cnt, 3), init, dtype=np.float32)
 
     # endregion
