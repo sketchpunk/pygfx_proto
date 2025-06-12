@@ -12,3 +12,5 @@ source .venv/bin/activate
 - All zz\_ files in /pgfx can be run with "Python Debug: Current File"
 
 - To run any file in the proto folder requires you to modify /.vscode/launch.json file. Change the "module" value in the "Hardcoded Module" profile to execute. Then can just press F5 in vscode.
+
+- If packages are not being found, make sure venv is active then run the following `uv pip install -e .`

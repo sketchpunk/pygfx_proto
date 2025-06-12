@@ -1,5 +1,5 @@
-from typing import Optional, Self
-from .types import Vec3Like
+from typing import Optional, Self, Union
+from .types import QuatLike, Vec3Like
 
 from .Quat import Quat
 from .Vec3 import Vec3
@@ -42,6 +42,30 @@ class Transform:
 
     def clone(self) -> "Transform":
         return Transform(self)
+
+    # endregion
+
+    # region DUNDER METHODS
+
+    def __setattr__(self, name, v: Union[Vec3Like, QuatLike]):
+        match name:
+            case "pos":
+                if hasattr(self, "pos"):
+                    self.pos.copy(v)
+                else:
+                    object.__setattr__(self, name, v)
+
+            case "scl":
+                if hasattr(self, "scl"):
+                    self.scl.copy(v)
+                else:
+                    object.__setattr__(self, name, v)
+
+            case "rot":
+                if hasattr(self, "rot"):
+                    self.rot.copy(v)
+                else:
+                    object.__setattr__(self, name, v)
 
     # endregion
 

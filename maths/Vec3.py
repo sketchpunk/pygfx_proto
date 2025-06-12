@@ -356,7 +356,7 @@ class Vec3(np.ndarray):
         yAxis.fromCross(zAxis, xAxis).norm()  # realign up
         return [xAxis, yAxis, zAxis]
 
-    def createBuffer(cnt: int, init: Vec3Like = [0, 0, 0]) -> NDArray[np.float32]:
+    def createBuffer(cnt: int, init: Vec3Like = [0, 0, 0]) -> NDArray:
         return np.full((cnt, 3), init, dtype=np.float32)
 
     # endregion

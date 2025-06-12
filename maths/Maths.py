@@ -1,23 +1,34 @@
 from .types import Vec3Like
 import math
+import numpy as np
 
 
-def fNorm(minv: float, maxv: float, v: float) -> float:
+def fract(f: float) -> float:
+    return f - np.floor(f)
+
+
+def snap(x: float, step: float) -> float:
+    return np.floor(x / step) * step
+
+
+# Adapted from GODOT-engine math_funcs.h
+def wrap(value: float, min: float, max: float) -> float:
+    range = max - min
+    if range != 0:
+        return value - (range * np.floor((value - min) / range))
+    return min
+
+
+def norm(minv: float, maxv: float, v: float) -> float:
     return (v - minv) / (maxv - minv)
 
 
-def smoothStep(minv, maxv, v) -> float:
-    # https://en.wikipedia.org/wiki/Smoothstep
-    v = max(0, min(1, (v - minv) / (maxv - minv)))
-    return v * v * (3 - 2 * v)
-
-
 def spherical(x: float, y: float) -> Vec3Like:
-    sx = math.sin(x)
+    sx = np.sin(x)
     return [
-        math.sin(y) * sx,
-        math.cos(x),
-        math.cos(y) * sx,
+        np.sin(y) * sx,
+        np.cos(x),
+        np.cos(y) * sx,
     ]
 
 

@@ -6,6 +6,8 @@ import math
 import numpy as np
 from .Vec3 import Vec3
 
+BLANK_VEC3 = np.zeros(3, dtype=np.float32)
+
 
 class Quat(np.ndarray):
     # region SETUP
@@ -241,6 +243,10 @@ class Quat(np.ndarray):
 
         return self.norm()
 
+    def fromSlerp(self, a: QuatLike, b: QuatLike, t: float) -> Self:
+        Quat.slerp(a, b, t, self)
+        return self
+
     # endregion
 
     # region SPECIAL OPERATIONS
@@ -290,6 +296,42 @@ class Quat(np.ndarray):
             self[3] = -self[3]
 
         return self
+
+    # endregion
+
+    # region TRANSFORMING
+
+    def transformVec3(self, v: Vec3Like, out: Vec3Like = [0, 0, 0]) -> Self:
+        qx = self[0]
+        qy = self[1]
+        qz = self[2]
+        qw = self[3]
+        vx = v[0]
+        vy = v[1]
+        vz = v[2]
+        x1 = qy * vz - qz * vy
+        y1 = qz * vx - qx * vz
+        z1 = qx * vy - qy * vx
+        x2 = qw * x1 + qy * z1 - qz * y1
+        y2 = qw * y1 + qz * x1 - qx * z1
+        z2 = qw * z1 + qx * y1 - qy * x1
+        out[0] = vx + 2 * x2
+        out[1] = vy + 2 * y2
+        out[2] = vz + 2 * z2
+        return out
+
+    def batchTransformVec3(
+        self, buf: NDArray, translate: Optional[Vec3Like] = BLANK_VEC3
+    ) -> NDArray:
+        out = buf.copy()
+
+        for i, v in enumerate(buf):
+            self.transformVec3(v, out[i])
+            out[i][0] = out[i][0] + translate[0]
+            out[i][1] = out[i][1] + translate[1]
+            out[i][2] = out[i][2] + translate[2]
+
+        return out
 
     # endregion
 
@@ -397,10 +439,10 @@ def qMul(a: QuatLike, b: QuatLike, out: QuatLike) -> QuatLike:
 
 
 def qInvert(q: QuatLike, out: QuatLike) -> QuatLike:
-    a0 = (q[0],)
-    a1 = (q[1],)
-    a2 = (q[2],)
-    a3 = (q[3],)
+    a0 = q[0]
+    a1 = q[1]
+    a2 = q[2]
+    a3 = q[3]
     dot = a0 * a0 + a1 * a1 + a2 * a2 + a3 * a3
 
     if dot == 0:

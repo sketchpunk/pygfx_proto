@@ -85,6 +85,11 @@ def varObj(obj):
         print(f"  {attr_name} : {attr_value}")
 
 
+def printDict(d):
+    for k, v in d.items():
+        print(f"Key: {k}\n-- Value: {v}")
+
+
 # endregion
 
 
