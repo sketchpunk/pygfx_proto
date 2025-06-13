@@ -11,7 +11,9 @@ class DynamicPoints(gfx.Points):
     # region MAIN
     def __init__(self, initCap=20):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        mat = gfx.PointsMaterial(color_mode="vertex", size_space="world", size_mode="vertex")
+        mat = gfx.PointsMaterial(
+            color_mode="vertex", size_space="world", size_mode="vertex", pick_write=True
+        )
         super().__init__(
             None, mat, visible=True, render_order=101, render_mask="auto", name="DynPoints"
         )
@@ -55,6 +57,11 @@ class DynamicPoints(gfx.Points):
         self._dyModified = True
         self._dyCount += 1
         return self
+
+    def posAt(self, idx):
+        if idx < self._dyCount:
+            return self._datPos[idx].copy()
+        return None
 
     def reset(self):
         self._dyCount = 0
