@@ -161,11 +161,3 @@ def useDarkScene(app):
     app.scene.add(grid)
 
     return app
-
-
-def testCube():
-    geo = gfx.box_geometry(1, 1, 1)
-    mat = gfx.MeshPhongMaterial(color="#336699", pick_write=True)
-    mesh = gfx.Mesh(geo, mat)
-    mesh.local.y = 0.5
-    return mesh

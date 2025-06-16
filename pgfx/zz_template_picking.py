@@ -1,6 +1,6 @@
 # region IMPORTS
 import numpy as np
-from UseGfxDisplay import UseGfxDisplay, useDarkScene, testCube
+from UseGfxDisplay import UseGfxDisplay, useDarkScene, gfx
 from DynamicPoints import DynamicPoints
 from Util import inspectObj, dirObj, varObj, printDict
 
@@ -11,7 +11,10 @@ App = useDarkScene(UseGfxDisplay({"title": "Template Picking"})).sphericalLook([
 # endregion
 
 # region MISC
-cube = testCube()
+geo = gfx.box_geometry(1, 1, 1)
+mat = gfx.MeshPhongMaterial(color="#336699", pick_write=True)
+cube = gfx.Mesh(geo, mat)
+cube.local.y = 0.5
 App.scene.add(cube)
 
 dyPoints = DynamicPoints()
@@ -30,14 +33,14 @@ def onPointDown(e):
     pi = e.pick_info
     if not pi["world_object"]:
         return
-    
+
     obj = pi["world_object"]
     match pi:
         case x if "vertex_index" in pi and isinstance(x["world_object"], DynamicPoints):
-            idx = pi['vertex_index']
+            idx = pi["vertex_index"]
             print(f"DynamicPoint - Id:{obj.id}, Idx:{idx}, pos:{obj.posAt(idx)}")
         case _:
-            fi = pi['face_index']
+            fi = pi["face_index"]
             fc = pi["face_coord"]
             subi = np.argmax(fc)
             vi = int(obj.geometry.indices.data[fi, subi])
@@ -47,6 +50,7 @@ def onPointDown(e):
 
     # print("~~~~~~~~~~~~~~~~~~~")
     # printDict( pi )
+
 
 App.on("pointer_down", onPointDown)
 

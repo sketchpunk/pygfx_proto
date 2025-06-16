@@ -1,5 +1,6 @@
 # region IMPORTS
-from UseGfxDisplay import UseGfxDisplay, useDarkScene, testCube
+from UseGfxDisplay import UseGfxDisplay, useDarkScene
+from FacedCube import facedCube
 
 from UseImgui import UseImgui, guiButton, guiFStepSlider
 from imgui_bundle import imgui  # lots of warnings about GLFW being used twice?
@@ -64,7 +65,7 @@ gui.onDraw = drawUI
 # endregion
 
 # region MISC
-cube = testCube()
+cube = facedCube()
 App.scene.add(cube)
 # endregion
 

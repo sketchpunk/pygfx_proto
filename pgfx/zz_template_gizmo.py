@@ -1,6 +1,7 @@
 # region IMPORTS
-from UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene, testCube
+from UseGfxDisplay import gfx, UseGfxDisplay, useDarkScene
 from Util import inspectObj, dirObj, varObj, printDict
+from FacedCube import facedCube
 
 # endregion
 
@@ -13,7 +14,7 @@ App.scene.add(gizmo)
 # endregion
 
 # region MISC
-cube = testCube()
+cube = facedCube()
 App.scene.add(cube)
 
 gizmo.set_object(cube)

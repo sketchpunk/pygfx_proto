@@ -1,5 +1,6 @@
 # region IMPORTS
-from UseGfxDisplay import UseGfxDisplay, useDarkScene, testCube
+from UseGfxDisplay import UseGfxDisplay, useDarkScene
+from FacedCube import facedCube
 import math
 
 # endregion
@@ -49,7 +50,7 @@ App.on("resize", onResize)
 # endregion
 
 # region MISC
-cube = testCube()
+cube = facedCube()
 App.scene.add(cube)
 # endregion
 
