@@ -252,6 +252,12 @@ class Vec3(np.ndarray):
         self[2] = a[2] + b[2]
         return self
 
+    def fromSub(self, a: Vec3Like, b: Vec3Like) -> Self:
+        self[0] = a[0] - b[0]
+        self[1] = a[1] - b[1]
+        self[2] = a[2] - b[2]
+        return self
+
     def fromMul(self, a: Vec3Like, b: Vec3Like) -> Self:
         self[0] = a[0] * b[0]
         self[1] = a[1] * b[1]
@@ -343,7 +349,7 @@ class Vec3(np.ndarray):
         yAxis = Vec3(up[0], up[1], up[2])
         xAxis = Vec3().fromCross(yAxis, zAxis).norm()
 
-        # Z & UP are parallel
+        # Z & Y are parallel
         if xAxis.lenSq == 0:
             if abs(yAxis[2]) == 1:
                 zAxis[0] += 0.0001  # shift x when Fwd or Bak
