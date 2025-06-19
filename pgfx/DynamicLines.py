@@ -7,9 +7,14 @@ import numpy as np
 
 class DynamicLines(gfx.Line):
     # region MAIN
-    def __init__(self, initCap=20):
+    def __init__(self, initCap=20, useDepth=True):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        mat = gfx.LineSegmentMaterial(thickness=1, color_mode="vertex", thickness_space="screen")
+        mat = gfx.LineSegmentMaterial(
+            thickness=1,
+            color_mode="vertex",
+            thickness_space="screen",
+            depth_test=useDepth,
+        )
         super().__init__(
             None, mat, visible=True, render_order=100, render_mask="auto", name="DynPoints"
         )

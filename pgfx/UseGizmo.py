@@ -75,7 +75,7 @@ class TransformGizmo(WorldObject):
         self.onScale = None
         self.onDragStart = None
         self.onDragEnd = None
-        self.render_order = 100
+        self.render_order = 110
         self.allow_depth = False
         # END CUSTOM
 

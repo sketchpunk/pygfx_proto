@@ -9,10 +9,14 @@ import numpy as np
 
 class DynamicPoints(gfx.Points):
     # region MAIN
-    def __init__(self, initCap=20):
+    def __init__(self, initCap=20, useDepth=True):
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         mat = gfx.PointsMaterial(
-            color_mode="vertex", size_space="world", size_mode="vertex", pick_write=True
+            color_mode="vertex",
+            size_space="world",
+            size_mode="vertex",
+            pick_write=True,
+            depth_test=useDepth,
         )
         super().__init__(
             None, mat, visible=True, render_order=101, render_mask="auto", name="DynPoints"
